@@ -1,12 +1,14 @@
 import sys
 
+from stats import parse_record
+
 lines = sys.stdin.read().splitlines()
 total = {}
 count = {}
 for line in lines:
-    city, temp, date = line.split(";")
-    total[city] = total.get(city, 0) + float(temp)
-    count[city] = count.get(city, 0) + 1
+    data = parse_record(line)
+    total[data["city"]] = total.get(data["city"], 0) + float(data["temp"])
+    count[data["city"]] = count.get(data["city"], 0) + 1
 best = ""
 for city in total:
     if best == "" or total[city] / count[city] > total[best] / count[best]:
