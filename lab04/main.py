@@ -5,6 +5,7 @@ lines = sys.stdin.read().splitlines()
 records, errs = read_valid(lines)
 print(len(records))
 print(errs)
+print(average_by_city(records))
 '''
 best = ""
 for city in total:
