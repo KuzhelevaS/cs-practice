@@ -12,7 +12,8 @@ def parse_record(line: str) -> dict:
 
 
 def read_valid(lines):
-    result = []   
+    result = [] 
+    err = 0  
     for line in lines:
         if len(line) == 0:
             continue
@@ -20,5 +21,8 @@ def read_valid(lines):
             result.append(parse_record(line))
         except ValueError:
             print("невозможно обработать строку: \"{line}\"")
-    return result
+            err += 1
+            
+    return result, err
+
 

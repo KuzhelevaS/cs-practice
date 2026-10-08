@@ -1,9 +1,10 @@
 import sys
-from stats import read_valid
+from stats import average_by_city, read_valid
 
 lines = sys.stdin.read().splitlines()
-records = read_valid(lines)
-print(records)
+records, errs = read_valid(lines)
+print(len(records))
+print(errs)
 '''
 best = ""
 for city in total:
