@@ -1,18 +1,15 @@
 import sys
 
-from stats import read_valid
+from stats import average_by_city, read_valid
 
 lines = sys.stdin.read().splitlines()
-total = {}
-count = {}
+
 records, errors = read_valid(lines)
-for record in records:
-    total[record["city"]] = total.get(record["city"], 0) + float(record["temp"])
-    count[record["city"]] = count.get(record["city"], 0) + 1
+averages = average_by_city(records)
 best = ""
-for city in total:
-    if best == "" or total[city] / count[city] > total[best] / count[best]:
+for city in averages:
+    if best == "" or averages[city] > averages[best]:
         best = city
 print(len(records))
 print(errors)
-print(total[best] / count[best])
+print(averages[best])

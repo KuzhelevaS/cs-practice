@@ -26,6 +26,17 @@ def read_valid(lines: list[str]) -> list[dict]:
 
     return result, err
 
+def average_by_city(records: list[dict]) -> dict:
+    total = {}
+    count = {}
+    for record in records:
+        total[record["city"]] = total.get(record["city"], 0) + record["temp"]
+        count[record["city"]] = count.get(record["city"], 0) + 1
+    result = dict()
+    for city in total:
+        result[city] = total[city] / count[city]
+    return result
+
 def ks_catch_exception(method, arg):
     try:
         method(arg)
@@ -72,3 +83,6 @@ if __name__ == "__main__":
     r3 = read_valid(s3)
     assert r3[0] == l3
     assert r3[1] == 2
+
+    r4 = {"Азов": 25.0, "Таганрог": 30.0}
+    assert average_by_city(l1) == r4
