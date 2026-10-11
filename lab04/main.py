@@ -1,18 +1,18 @@
 import sys
 
-from stats import parse_record
+from stats import read_valid
 
 lines = sys.stdin.read().splitlines()
 total = {}
 count = {}
-for line in lines:
-    data = parse_record(line)
-    total[data["city"]] = total.get(data["city"], 0) + float(data["temp"])
-    count[data["city"]] = count.get(data["city"], 0) + 1
+records, errors = read_valid(lines)
+for record in records:
+    total[record["city"]] = total.get(record["city"], 0) + float(record["temp"])
+    count[record["city"]] = count.get(record["city"], 0) + 1
 best = ""
 for city in total:
     if best == "" or total[city] / count[city] > total[best] / count[best]:
         best = city
-print(len(lines))
-print(0)
+print(len(records))
+print(errors)
 print(total[best] / count[best])
