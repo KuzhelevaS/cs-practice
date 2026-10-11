@@ -1,15 +1,12 @@
 import sys
 
-from stats import average_by_city, read_valid
+from stats import average_by_city, read_valid, warmest_city
 
 lines = sys.stdin.read().splitlines()
 
 records, errors = read_valid(lines)
 averages = average_by_city(records)
-best = ""
-for city in averages:
-    if best == "" or averages[city] > averages[best]:
-        best = city
+best = warmest_city(averages)
 print(len(records))
 print(errors)
 print(averages[best])

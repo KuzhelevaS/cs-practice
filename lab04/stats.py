@@ -37,6 +37,15 @@ def average_by_city(records: list[dict]) -> dict:
         result[city] = total[city] / count[city]
     return result
 
+def warmest_city(records: list[dict]) -> str:
+    best = ""
+    for city in records:
+        if best == "" or records[city] > records[best]:
+            best = city
+        elif records[city] == records[best]:
+            best = min(city, best)
+    return best
+
 def ks_catch_exception(method, arg):
     try:
         method(arg)
@@ -86,3 +95,14 @@ if __name__ == "__main__":
 
     r4 = {"Азов": 25.0, "Таганрог": 30.0}
     assert average_by_city(l1) == r4
+
+    assert warmest_city(r4) == "Таганрог"
+
+    r5 = {"Азов": 30.0, "Таганрог": 25.0}
+    assert warmest_city(r5) == "Азов"
+
+    r6 = {"Азов": 30.0, "Аксай": 30.0}
+    assert warmest_city(r6) == "Азов"
+
+    r6 = {"Аксай": 30.0, "Азов": 30.0}
+    assert warmest_city(r6) == "Азов"
