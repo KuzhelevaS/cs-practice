@@ -32,6 +32,21 @@ def top_errors(lines: list[str], n: int) -> list[list]:
     errors = sorted(errors, key=lambda pair: pair[1], reverse=True)
     return [list(pair) for pair in errors[:n]]
 
+def format_report(counts: dict, errors: list[list]) -> str:
+    result = "Отчёт по журналу\n\n"
+    sorted_levels = sorted(counts.items(), key= lambda x: x[0])
+    for level in sorted_levels:
+        result += level[0] + ": " + str(level[1]) + "\n"
+
+    result += "\n"
+    result += "Частые ошибки:\n"
+
+    for error in errors:
+        result += "- " + error[0] + " — " + str(error[1]) + "\n"
+
+    return result
+
+
 def ks_catch_exception(method, arg):
     try:
         method(arg)
