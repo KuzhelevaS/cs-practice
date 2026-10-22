@@ -7,7 +7,8 @@ def parse_event(line: str) -> dict:
     segments = line.lstrip().split(None, 2)
     if len(segments) != 3 or segments[1] not in LEVELS:
         raise ValueError("Неверный формат строки")
-    return {"time": segments[0], "level": segments[1], "message": segments[2]}
+    time, level, message = (s.strip() for s in segments)
+    return {"time": time, "level": level, "message": message}
 
 def count_levels(lines: list[str]) -> dict:
     result = dict()
