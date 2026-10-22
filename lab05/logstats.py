@@ -4,10 +4,10 @@ BROKEN_LEVEL = "BROKEN"
 def parse_event(line: str) -> dict:
     if line.strip() == "":
         return {}
-    time, level, message = map(str.strip, line.lstrip().split(None, 2))
-    if not level in LEVELS:
+    segments = line.lstrip().split(None, 2)
+    if len(segments) != 3 or segments[1] not in LEVELS:
         raise ValueError("Неверный формат строки")
-    return {"time": time, "level": level, "message": message}
+    return {"time": segments[0], "level": segments[1], "message": segments[2]}
 
 def count_levels(lines: list[str]) -> dict:
     result = dict()
@@ -15,6 +15,8 @@ def count_levels(lines: list[str]) -> dict:
         try:
             data = parse_event(line)
             result[data["level"]] = result.get(data["level"], 0) + 1
+        except KeyError:
+            continue
         except ValueError:
             result[BROKEN_LEVEL] = result.get(BROKEN_LEVEL, 0) + 1
     return result
@@ -75,7 +77,8 @@ def main():
             "2026-03-02T10:02:00 SOMEELSE Диск заполнен на 91%"]
 
     assert count_levels(data1) == {BROKEN_LEVEL: 1, "ERROR": 2, "INFO": 1, "WARNING": 1}
-
+    data1_1 = ["", " ", "2026-03-01T09:03:55 INFO ok", "2026-03-01T09"]
+    assert count_levels(data1_1) == {"INFO": 1, "BROKEN": 1}
 
     assert top_errors(data1, 1) == [["Нет доступа к каталогу /var/log", 2]]
 
