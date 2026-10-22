@@ -19,6 +19,19 @@ def count_levels(lines: list[str]) -> dict:
             result[BROKEN_LEVEL] = result.get(BROKEN_LEVEL, 0) + 1
     return result
 
+def top_errors(lines: list[str], n: int) -> list[list]:
+    result = dict()
+    for line in lines:
+        try:
+            data = parse_event(line)
+            if data["level"] == "ERROR":
+                result[data["message"]] = result.get(data["message"], 0) + 1
+        except ValueError:
+            pass
+    errors = sorted(result.items(), key=lambda pair: pair[0])
+    errors = sorted(errors, key=lambda pair: pair[1], reverse=True)
+    return [list(pair) for pair in errors[:n]]
+
 def ks_catch_exception(method, arg):
     try:
         method(arg)
@@ -48,6 +61,15 @@ def main():
 
     assert count_levels(data1) == {BROKEN_LEVEL: 1, "ERROR": 2, "INFO": 1, "WARNING": 1}
 
+
+    assert top_errors(data1, 1) == [["Нет доступа к каталогу /var/log", 2]]
+
+    data2 = ["2026-03-02T10:00:00 ERROR Короткий запуск",
+             "2026-03-02T10:00:30 ERROR Нет доступа к каталогу /var/log",
+             "2026-03-02T10:01:00 ERROR Нет доступа к каталогу /var/log",
+             "2026-03-02T10:02:00 ERROR Диск заполнен на 91%",
+             "2026-03-02T10:02:00 ERROR Диск заполнен на 91%"]
+    assert top_errors(data2, 2) == [["Диск заполнен на 91%", 2], ["Нет доступа к каталогу /var/log", 2]]
 
 if __name__ == "__main__":
     main()
