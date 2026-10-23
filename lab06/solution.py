@@ -22,6 +22,15 @@ def deepest_path(paths: list[str]) -> str:
             saved = el
     return saved
 
+def human_size(n_bytes: int) -> str:
+    units = ["Б", "КБ", "МБ", "ГБ", "ТБ"]
+    digits = 0
+    for unit in units:
+        if n_bytes < 1024:
+            return f"{n_bytes:.{digits}f} {unit}"
+        n_bytes /= 1024
+        digits = 1
+
 def test():
     paths = ["docs/report.PDF", "notes.txt", "docs/img/logo.png", "Makefile"]
 
@@ -34,9 +43,11 @@ def test():
     assert deepest_path(["x/y/z.txt", "a/b/c.txt"]) == "a/b/c.txt"
     assert deepest_path([]) == ""
 
-    #assert human_size(900) == "900 Б"
-    #assert human_size(1536) == "1.5 КБ"
-    #assert human_size(5 * 1024 * 1024) == "5.0 МБ"
+    assert human_size(900) == "900 Б"
+    assert human_size(1536) == "1.5 КБ"
+    assert human_size(5 * 1024 * 1024) == "5.0 МБ"
+    assert human_size(0) == "0 Б"
+    assert human_size(3221225472) == "3.0 ГБ"
 
 if __name__ == "__main__":
     test()
