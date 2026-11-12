@@ -1,5 +1,6 @@
 import csv
 import io
+import json
 
 def csv_to_records(text: str) -> list[dict]:
     if not text:
@@ -83,6 +84,9 @@ def merge_by_key(rows: list[dict], extra: dict, key: str = id) -> list[dict]:
 
     return result
 
+def records_to_json(records: list[dict]) -> str:
+    return json.dumps(records, ensure_ascii=False, indent=2, sort_keys=True)
+
 def test():
     assert(csv_to_records("id,город\n1,Азов\n2,Шахты") == [{"id": "1", "город": "Азов"}, {"id": "2", "город": "Шахты"}])
     assert (csv_to_records("город, цена \n Азов , 100") == [{"цена": "100", "город": "Азов"}])
@@ -96,6 +100,14 @@ def test():
     d1_1 = [{"id": "1", "город": "Азов"}]
     d2_1 = {"1": {"регион": "Ростовская"}}
     assert merge_by_key(d1_1, d2_1, "id") == [{"регион": "Ростовская", "id": "1", "город": "Азов"}]
+
+    assert records_to_json([]) == "[]"
+    assert records_to_json([{"б": 2, "а": 1}]) == """[
+  {
+    "а": 1,
+    "б": 2
+  }
+]"""
 
 if __name__ == "__main__":
     test()
