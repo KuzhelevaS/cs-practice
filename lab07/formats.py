@@ -24,11 +24,63 @@ def csv_to_records(text: str) -> list[dict]:
         records.append(record)
     return records
 
+def get_value(value: str):
+    low = value.lower()
+    if low in ("true", "yes"):
+        return True
+    if low in ("false", "no"):
+        return False
+
+    try:
+        return int(value)
+    except ValueError:
+        pass
+
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
+def parse_settings(lines: list[str]) -> dict:
+    result = dict()
+    current_list_key = None
+
+    for raw in lines:
+        line = raw.split("#", 1)[0].strip()
+        if not line:
+            continue
+
+        if line[:2] == "- ":
+            if current_list is not None:
+                current_list.append(get_value(line[2:].strip()))
+            continue
+
+        if ":" in line:
+            key, _, value = line.partition(":")
+            key = key.strip()
+            value = value.strip()
+
+            if value == "":
+                current_list = []
+                result[key] = current_list
+            else:
+                result[key] = get_value(value)
+                current_list = None
+
+    return result
+
+
+
 def test():
     assert(csv_to_records("id,город\n1,Азов\n2,Шахты") == [{"id": "1", "город": "Азов"}, {"id": "2", "город": "Шахты"}])
     assert (csv_to_records("город, цена \n Азов , 100") == [{"цена": "100", "город": "Азов"}])
     assert(csv_to_records("") == [])
 
+    settings1 = ["# отчёт", "title: Отчёт за март", "decimals: 1", "active: true", "columns:", "  - город", "  - цена"]
+    assert(parse_settings(settings1) == {"title": "Отчёт за март", "decimals": 1, "active": True, "columns": ["город", "цена"]})
+    assert parse_settings(["rate: 3,5 # с запятой"]) == {"rate": "3,5"}
+    assert parse_settings([]) == dict()
 
 if __name__ == "__main__":
     test()
