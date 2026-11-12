@@ -70,7 +70,18 @@ def parse_settings(lines: list[str]) -> dict:
 
     return result
 
+def merge_by_key(rows: list[dict], extra: dict, key: str = id) -> list[dict]:
+    result = []
 
+    for row in rows:
+        k = row.get(key)
+        addition = extra.get(k, {})
+
+        temp = dict(addition)
+        temp.update(row)
+        result.append(temp)
+
+    return result
 
 def test():
     assert(csv_to_records("id,город\n1,Азов\n2,Шахты") == [{"id": "1", "город": "Азов"}, {"id": "2", "город": "Шахты"}])
@@ -81,6 +92,10 @@ def test():
     assert(parse_settings(settings1) == {"title": "Отчёт за март", "decimals": 1, "active": True, "columns": ["город", "цена"]})
     assert parse_settings(["rate: 3,5 # с запятой"]) == {"rate": "3,5"}
     assert parse_settings([]) == dict()
+
+    d1_1 = [{"id": "1", "город": "Азов"}]
+    d2_1 = {"1": {"регион": "Ростовская"}}
+    assert merge_by_key(d1_1, d2_1, "id") == [{"регион": "Ростовская", "id": "1", "город": "Азов"}]
 
 if __name__ == "__main__":
     test()
